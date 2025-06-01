@@ -6,9 +6,8 @@ const bookSchema = mongoose.Schema({
     author: {type: String, required: true},
     imageUrl: {type: String, required: true},
     year: {type: Number, required: true},
-    genre: {type: String, required: true},
-    
-    rating: [
+    genre: {type: String, required: true},  
+    ratings: [
         {
         userId: {type: String},
         grade: {type: Number}

@@ -1,27 +1,39 @@
 const Book = require('../models/book');
-
+const fs = require('fs')
 
 // POST => Ajout d'un livre 
 exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._id;
-    const book = new Book ({
+    const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     });
     book.save()
-        .then(() => { res.status(201).json({ message : 'Objet enregistré!' }) })
-        .catch(error => {res.status(400).json( { error }) })
+        .then(() => { res.status(201).json({ message: 'Objet enregistré!' }) })
+        .catch(error => { res.status(400).json({ error }) })
 }
 
-// GET => Récupération d'un livre spécifique
 exports.getOneBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
-        .then(book => res.status(200).json(book))
-        .catch(error => res.status(404).json({ error }))
-}
+        .then(book => {
+            if (!book) {
+                return res.status(404).json({ message: 'Livre introuvable' });
+            }
+
+            const bookObj = book.toObject();
+
+            // Si l'utilisateur est connecté, ajoute l'info pour le frontend
+            if (req.auth?.userId) {
+                bookObj.isOwner = book.userId === req.auth.userId;
+            }
+
+            res.status(200).json(bookObj);
+        })
+        .catch(error => res.status(500).json({ error }));
+};
 
 // GET => Récupération de tous les livres
 exports.getAllBooks = (req, res, next) => {
@@ -49,7 +61,7 @@ exports.deleteBook = (req, res, next) => {
                 });
             }
         })
-        .catch( error => {
+        .catch(error => {
             res.status(404).json({ error });
         });
 };
@@ -88,4 +100,3 @@ exports.modifyBook = (req, res, next) => {
             res.status(404).json({ error });
         });
 };
-
