@@ -6,8 +6,9 @@ const auth = require ('../middleware/auth')
 
 router.get('/', booksCtrl.getAllBooks);
 router.get('/:id', booksCtrl.getOneBook);
-router.post('/' , auth, upload, booksCtrl.createBook);
+router.post('/' , auth, upload, upload.resizeImage, booksCtrl.createBook);
+router.put('/:id', auth, upload, upload.resizeImage, booksCtrl.modifyBook);
 router.delete('/:id', auth, booksCtrl.deleteBook);
-router.put('/:id', auth, upload, booksCtrl.modifyBook);
+
 
 module.exports = router;
