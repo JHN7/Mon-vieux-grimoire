@@ -5,6 +5,16 @@ const jwt = require('jsonwebtoken');
 
 // POST => Création de compte
 exports.signup = (req, res, next) => {
+
+    // Regex de validation du mot de passe
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+    // Si le mot de passe est trop court ou qu'il ne correspond pas au standard attend, on renvoit une erreur
+    if (!passwordRegex.test(req.body.password)) {
+        return res.status(400).json({
+            error: 'Le mot de passe doit contenir au minimum 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial.'
+        });
+    }
     //Appel de la fonction de hachage de bcrypt pour le PW (salé 10 fois)
     bcrypt.hash(req.body.password, 10)
     // Utilisation du hash pour créer un utilisateur
@@ -19,7 +29,10 @@ exports.signup = (req, res, next) => {
                 .then(() => res.status(201).json({ message: 'Utilisateur crée !' }))
                 .catch(error => res.status(400).json({ error }))
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => {
+    console.error('Erreur lors du hash :', error);
+    res.status(500).json({ error });
+});
 };
 
 

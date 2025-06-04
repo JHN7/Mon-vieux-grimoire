@@ -32,8 +32,7 @@ module.exports.resizeImage = (req, res, next) => {
     if (!req.file) {
         return next();
     }
-
-
+    
     const filePath = req.file.path;
     const fileName = req.file.filename;
     const outputFilePath = path.join('images', `resized_${fileName}`);

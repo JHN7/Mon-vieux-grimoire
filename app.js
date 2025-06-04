@@ -1,12 +1,15 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const booksRoutes = require('./routes/books')
 const userRoutes = require('./routes/user')
 const path = require('path');
 
+// Charger variable d'environnement
+dotenv.config();
 
 //Connexion à la base de données (mdp à revoir)
-mongoose.connect('mongodb+srv://JulienH:NrKC6F458a7XR8L@cluster0.6n8fpqk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+mongoose.connect(process.env.MONGODB_URI,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
